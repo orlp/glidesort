@@ -28,7 +28,7 @@ mileage will vary. Nevertheless, an example benchmark from a 2021 Apple M1
 machine comparing against `[T]::sort` and `[T]::sort_unstable` for various input
 distributions of `u64`:
 
-![Performance graph](https://i.imgur.com/pC9sA7Y.png)
+![Performance graph](https://i.imgur.com/8fIACqY.png)
 
 Compiled with `rustc 1.69.0-nightly (11d96b593)` using `--release` and `lto = "thin"`.
 
