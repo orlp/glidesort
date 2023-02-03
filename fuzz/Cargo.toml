@@ -1,0 +1,28 @@
+[package]
+name = "glidesort-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+bytemuck = "1.12"
+
+[dependencies.glidesort]
+path = ".."
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "fuzz_sort"
+path = "fuzz_targets/fuzz_sort.rs"
+test = false
+doc = false
