@@ -53,7 +53,7 @@ pub fn select<T>(cond: bool, if_true: *mut T, if_false: *mut T) -> *mut T {
 #[inline]
 #[cold]
 pub fn abort() -> ! {
-    // panic!("abort called")
+    // panic!("abort called");
     #[cfg(not(feature = "unstable"))]
     {
         std::process::abort();

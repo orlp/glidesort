@@ -62,7 +62,7 @@ fn glidesort_alloc_size<T>(n: usize) -> usize {
     let full_allowed = n.min(FULL_ALLOC_MAX_BYTES / tlen);
     let half_allowed = (n / 2).min(HALF_ALLOC_MAX_BYTES / tlen);
     let eighth_allowed = n / 8;
-    full_allowed.max(half_allowed).max(eighth_allowed)
+    full_allowed.max(half_allowed).max(eighth_allowed).max(SMALL_SORT)
 }
 
 /// See [`slice::sort`].
@@ -210,7 +210,7 @@ fn make_scratch_after_vec<T>(
 ) -> (&mut [T], &mut [MaybeUninit<T>]) {
     // Avoid reallocation if reasonable.
     let free_capacity = buffer.capacity() - buffer.len();
-    if free_capacity / 2 < target_size {
+    if free_capacity / 2 < target_size || free_capacity < SMALL_SORT {
         while let Err(_) = buffer.try_reserve(target_size) {
             // We are in a low-memory situation, we'd much prefer a bit slower sorting
             // over completely running out, so aggressively reduce our memory request.

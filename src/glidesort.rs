@@ -206,6 +206,15 @@ pub fn glidesort<'el, 'sc, BE: Brand, BS: Brand, T, F: Cmp<T>>(
     is_less: &mut F,
     eager_smallsort: bool,
 ) {
+    if scratch.len() < SMALL_SORT {
+        // Sanity fallback, we *need* at least SMALL_SORT buffer size.
+        let mut v = Vec::with_capacity(SMALL_SORT);
+        let (_, new_buffer) = split_at_spare_mut(&mut v);
+        return MutSlice::from_maybeuninit_mut_slice(new_buffer, |new_scratch| {
+            glidesort(el, new_scratch.assume_uninit(), is_less, eager_smallsort)
+        });
+    }
+
     tracking::register_buffer("input", el.weak());
     tracking::register_buffer("scratch", scratch.weak());
 
