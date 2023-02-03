@@ -30,7 +30,7 @@ distributions of `u64`:
 
 ![Performance graph](https://i.imgur.com/8fIACqY.png)
 
-Compiled with `rustc 1.69.0-nightly (11d96b593)` using `--release` and `lto = "thin"`.
+Compiled with `rustc 1.69.0-nightly (11d96b593)` using `--release --features unstable` and `lto = "thin"`.
 
 
 # Usage
