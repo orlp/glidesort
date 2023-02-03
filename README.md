@@ -6,7 +6,7 @@ of Timsort-style merge sorts for pre-sorted data with the best-case behavior of
 It is a comparison-based sort supporting arbitrary comparison operators,
 and while exceptional on data with patterns it is also very fast for random data.
 
-For sorting n elements with k distinct values Glidesort has the following
+For sorting `n` elements with `k` distinct values glidesort has the following
 characteristics by default:
 
 ```
@@ -102,8 +102,9 @@ fits in our scratch space to process.
 
 Yes, stable quicksort. Wikipedia will outright tell you that quicksort is
 unstable, or at least all efficient implementations are. That simply isn't true,
-all it needs is auxiliary memory. Credit to scandum's fluxsort for demonstrating
-that stable quicksort can be efficient in practice.
+all it needs is auxiliary memory. Credit to Igor van den Hoven's
+[fluxsort](https://github.com/scandum/fluxsort) for demonstrating that stable
+quicksort can be efficient in practice.
 
 Glidesort uses a novel bidirectional stable partitioning method that interleaves
 a left-to-right partition scan with a right-to-left partition scan for greater
@@ -114,4 +115,4 @@ performance on all data.
 
 # License
 
-Glidesort is dual-licensed under Apache License, Version 2.0 and MIT licenses.
+Glidesort is dual-licensed under the Apache License, Version 2.0 and the MIT license.
