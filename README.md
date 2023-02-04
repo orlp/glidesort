@@ -6,20 +6,19 @@ of Timsort-style merge sorts for pre-sorted data with the best-case behavior of
 It is a comparison-based sort supporting arbitrary comparison operators,
 and while exceptional on data with patterns it is also very fast for random data.
 
-For sorting `n` elements with `k` distinct values glidesort has the following
+For sorting $n$ elements with $k$ distinct values glidesort has the following
 characteristics by default:
 
-```
-Best    Average     Worst       Memory      Stable      Deterministic
-n       n log k     n log n     n / 8       Yes         Yes
-```
+Best | Average           | Worst             | Memory        | Stable | Deterministic
+---- | ----------------- | ----------------- | ------------- | ------ | -------------
+$n$  | $n \times log(k)$ | $n \times log(n)$ | $\frac{n}{8}$ | Yes    | Yes
 
-Glidesort can use as much (up to `n`) or as little extra memory as you want. If
-given only `O(1)` memory the average and worst case become `O(n (log n)^2)`, however
+Glidesort can use as much (up to $n$) or as little extra memory as you want. If
+given only $O(1)$ memory the average and worst case become $O(n \times log(n)^2)$, however
 in practice its performance is great for all but the most skewed data size /
-auxiliary space ratios. The default is to allocate up to `n` elements worth of
-data, unless this exceeds 1 MiB, in which case we scale this down to `n / 2`
-elements worth of data up until 1 GiB after which glidesort uses `n / 8` memory.
+auxiliary space ratios. The default is to allocate up to $n$ elements worth of
+data, unless this exceeds 1MiB, in which case we scale this down to $\frac{n}{2}$
+elements worth of data up until 1GiB after which glidesort uses $\frac{n}{8}$ memory.
 
 # Benchmark
 
