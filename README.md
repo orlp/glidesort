@@ -86,16 +86,20 @@ similar to pattern-defeating quicksort.
 # Stable merging
 
 Glidesort merges multiple sorted runs at the same time, and interleaves their
-merging loops for better memory-level parallelism and hiding data dependencies.
-This also allows it to use ping-pong merging avoiding unnecessary `memcpy` calls
-by using the implicit copy you get from an out-of-place merge. The merging loops
-are completely branchless, making it fast for random data as well.
+merging loops for better memory-level and instruction-level parallelism as well
+as hiding data dependencies. For similar reasons it also interleaves independent
+left-to-right and right-to-left merging loops as bidirectional merges, which are
+a generalization of [quadsort](https://github.com/scandum/quadsort)s parity
+merges. Merging multiple runs at the same time also lets glidesort use ping-pong
+merging, avoiding unnecessary `memcpy` calls by using the implicit copy you get
+from an out-of-place merge. All merging loops are completely branchless, making
+it fast for random data as well.
 
-Glidesort uses binary searches to split up large merge operations into smaller
-merge operations that it performs at the same time using instruction-level
-parallelism. This splitting procedure also allows glidesort to use arbitrarily
-small amounts of memory, as it can choose to split a merge repeatedly until it
-fits in our scratch space to process.
+Glidesort further uses binary searches to split up large merge operations into
+smaller merge operations that it then performs at the same time using
+instruction-level parallelism. This splitting procedure also allows glidesort to
+use arbitrarily small amounts of memory, as it can choose to split a merge
+repeatedly until it fits in our scratch space to process.
 
 
 # Stable quicksort
