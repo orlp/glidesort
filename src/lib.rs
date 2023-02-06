@@ -3,6 +3,11 @@
 #![cfg_attr(feature = "unstable", allow(incomplete_features))]
 #![cfg_attr(feature = "unstable", feature(specialization, marker_trait_attr))]
 
+#![allow(clippy::needless_lifetimes)]     // Improves readability despite what clippy claims.
+#![allow(clippy::type_complexity)]        // Somethings things get complex...
+#![allow(clippy::unnecessary_mut_passed)] // Exclusivity assertions.
+#![allow(clippy::forget_non_drop)]        // Forgetting soon-to-be-overlapped slices is important.
+
 //! Glidesort is a novel stable sorting algorithm that combines the best-case behavior of
 //! Timsort-style merge sorts for pre-sorted data with the best-case behavior of pattern-defeating
 //! quicksort for data with many duplicates. It is a comparison-based sort supporting arbitrary
@@ -67,16 +72,40 @@ fn glidesort_alloc_size<T>(n: usize) -> usize {
 
 /// See [`slice::sort`].
 pub fn sort<T: Ord>(v: &mut [T]) {
-    sort_by(v, |a, b| a.cmp(b))
+    sort_with_vec_by(v, &mut Vec::new(), |a, b| a.cmp(b))
 }
 
 /// See [`slice::sort_by_key`].
 pub fn sort_by_key<T, F: FnMut(&T) -> K, K: Ord>(v: &mut [T], mut f: F) {
-    sort_by(v, |a, b| f(a).cmp(&f(b)))
+    sort_with_vec_by(v, &mut Vec::new(), |a, b| f(a).cmp(&f(b)))
 }
 
 /// See [`slice::sort_by`].
-pub fn sort_by<T, F>(v: &mut [T], mut compare: F)
+pub fn sort_by<T, F>(v: &mut [T], compare: F)
+where
+    F: FnMut(&T, &T) -> Ordering,
+{
+    sort_with_vec_by(v, &mut Vec::new(), compare)
+}
+
+/// Like [`sort`], except this function allocates its scratch space with `scratch_buf.reserve(_)`.
+/// 
+/// This allows you to re-use the same allocation many times.
+pub fn sort_with_vec<T: Ord>(v: &mut [T], scratch_buf: &mut Vec<T>) {
+    sort_with_vec_by(v, scratch_buf, |a, b| a.cmp(b))
+}
+
+/// Like [`sort_by_key`], except this function allocates its scratch space with `scratch_buf.reserve(_)`.
+/// 
+/// This allows you to re-use the same allocation many times.
+pub fn sort_with_vec_by_key<T, F: FnMut(&T) -> K, K: Ord>(v: &mut [T], scratch_buf: &mut Vec<T>, mut f: F) {
+    sort_with_vec_by(v, scratch_buf, |a, b| f(a).cmp(&f(b)))
+}
+
+/// Like [`sort_by`], except this function allocates its scratch space with `scratch_buf.reserve(_)`.
+///
+/// This allows you to re-use the same allocation many times.
+pub fn sort_with_vec_by<T, F>(v: &mut [T], scratch_buf: &mut Vec<T>, mut compare: F)
 where
     F: FnMut(&T, &T) -> Ordering,
 {
@@ -104,8 +133,7 @@ where
             return glidesort_with_max_stack_scratch(el, &mut is_less);
         }
 
-        let mut scratch_alloc = Vec::new();
-        let (_, buffer) = make_scratch_after_vec(&mut scratch_alloc, glidesort_alloc_size::<T>(n));
+        let (_, buffer) = make_scratch_after_vec(scratch_buf, glidesort_alloc_size::<T>(n));
         MutSlice::from_maybeuninit_mut_slice(buffer, |scratch| {
             glidesort::glidesort(el, scratch.assume_uninit(), &mut is_less, false)
         })
@@ -211,7 +239,7 @@ fn make_scratch_after_vec<T>(
     // Avoid reallocation if reasonable.
     let free_capacity = buffer.capacity() - buffer.len();
     if free_capacity / 2 < target_size || free_capacity < SMALL_SORT {
-        while let Err(_) = buffer.try_reserve(target_size) {
+        while buffer.try_reserve(target_size).is_err() {
             // We are in a low-memory situation, we'd much prefer a bit slower sorting
             // over completely running out, so aggressively reduce our memory request.
             target_size /= 8;
@@ -242,6 +270,7 @@ fn glidesort_with_max_stack_scratch<'l, B: Brand, T, F: Cmp<T>>(
     unsafe {
         // SAFETY: we assume a [MaybeUninit<u8>; N] is initialized, which it
         // trivially is as it makes no guarantees.
+        #[allow(clippy::uninit_assumed_init)]
         let mut aligned_buffer: AlignedBuffer<T, MAX_STACK_SCRATCH_SIZE_BYTES> =
             MaybeUninit::uninit().assume_init();
         let aligned_buffer_bytes = aligned_buffer.buffer.as_mut_slice();

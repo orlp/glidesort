@@ -122,6 +122,8 @@ pub fn split_at_spare_mut<T>(v: &mut Vec<T>) -> (&mut [T], &mut [MaybeUninit<T>]
 }
 
 
+/// # Safety
+/// Only implemented for copy types.
 pub unsafe trait IsCopyType {
     fn is_copy_type() -> bool;
 }
@@ -142,6 +144,9 @@ unsafe impl<T: Copy> IsCopyType for T {
 }
 
 
+/// # Safety
+/// Only implemented for types for which we may call Ord on (soon to be
+/// forgotten) copies, even if T isn't Copy.
 pub unsafe trait MayCallOrdOnCopy {
     fn may_call_ord_on_copy() -> bool;
 }

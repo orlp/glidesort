@@ -6,7 +6,7 @@ use crate::util::*;
 #[inline]
 pub fn select_pivot<'l, 'r, BL, BR, T, F: Cmp<T>>(
     left: MutSlice<'l, BL, T, AlwaysInit>,
-    right: MutSlice<'l, BR, T, AlwaysInit>,
+    right: MutSlice<'r, BR, T, AlwaysInit>,
     is_less: &mut F,
 ) -> *mut T {
     unsafe {

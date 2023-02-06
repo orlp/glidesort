@@ -420,7 +420,7 @@ unsafe fn stable_bidir_quicksort_into<
     let partition_left = match partition_strategy {
         PartitionStrategy::LeftWithPivot(_) => true,
         PartitionStrategy::LeftIfNewPivotEquals(p) => unsafe { !is_less(&*p, &*pivot_pos) },
-        PartitionStrategy::LeftIfNewPivotEqualsCopy(ref p) => unsafe { !is_less(&*p, &*pivot_pos) },
+        PartitionStrategy::LeftIfNewPivotEqualsCopy(ref p) => unsafe { !is_less(p, &*pivot_pos) },
         PartitionStrategy::RightWithNewPivot => false,
     };
 

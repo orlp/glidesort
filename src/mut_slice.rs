@@ -16,6 +16,7 @@ impl<'id> Brand for InvariantLifetime<'id> {}
 
 // States.
 #[rustfmt::skip]
+#[allow(clippy::missing_safety_doc)]
 pub mod states {
     pub struct Weak;
     pub struct Uninit;
