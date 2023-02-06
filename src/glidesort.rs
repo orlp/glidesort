@@ -36,7 +36,7 @@ impl<'l, B: Brand, T> LogicalRun<'l, B, T> {
         // Check if input is (partially) pre-sorted in a meaningful way.
         if el.len() >= SMALL_SORT {
             let (run_length, descending) = run_length_at_start(el.as_mut_slice(), is_less);
-            if run_length >= SMALL_SORT {
+            if run_length >= SMALL_SORT && run_length * run_length >= el.len() / 2 {
                 if descending {
                     #[cfg(feature = "tracking")]
                     {
