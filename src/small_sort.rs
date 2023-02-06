@@ -139,14 +139,10 @@ impl<'l, BR, T> Pow2SmallSort<'l, BR, T> {
                     merge_state.branchless_merge_one_at_begin(is_less);
                     merge_state.branchless_merge_one_at_end(is_less);
                 }
-                
+
                 if !merge_state.symmetric_merge_successful() {
                     // Bad comparison operator, just copy over input.
-                    ptr::copy(
-                        backup_src.upgrade().begin(),
-                        backup_dst.begin(),
-                        N,
-                    );
+                    ptr::copy(backup_src.upgrade().begin(), backup_dst.begin(), N);
                 }
             } else {
                 for _ in 0..k / 2 {
@@ -197,14 +193,12 @@ impl<'l, BR, T> Pow2SmallSort<'l, BR, T> {
                     left_merge.branchless_merge_one_at_end(is_less);
                     right_merge.branchless_merge_one_at_end(is_less);
                 }
-                
-                if !left_merge.symmetric_merge_successful() || !right_merge.symmetric_merge_successful() {
+
+                if !left_merge.symmetric_merge_successful()
+                    || !right_merge.symmetric_merge_successful()
+                {
                     // Bad comparison operator, just copy over input.
-                    ptr::copy(
-                        backup_src.upgrade().begin(),
-                        backup_dst.begin(),
-                        N,
-                    );
+                    ptr::copy(backup_src.upgrade().begin(), backup_dst.begin(), N);
                 }
             } else {
                 for _ in 0..k / 2 {

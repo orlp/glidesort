@@ -2,18 +2,17 @@
 #![cfg_attr(feature = "unstable", feature(core_intrinsics))]
 #![cfg_attr(feature = "unstable", allow(incomplete_features))]
 #![cfg_attr(feature = "unstable", feature(specialization, marker_trait_attr))]
-
-#![allow(clippy::needless_lifetimes)]     // Improves readability despite what clippy claims.
-#![allow(clippy::type_complexity)]        // Somethings things get complex...
+#![allow(clippy::needless_lifetimes)] // Improves readability despite what clippy claims.
+#![allow(clippy::type_complexity)] // Somethings things get complex...
 #![allow(clippy::unnecessary_mut_passed)] // Exclusivity assertions.
-#![allow(clippy::forget_non_drop)]        // Forgetting soon-to-be-overlapped slices is important.
+#![allow(clippy::forget_non_drop)] // Forgetting soon-to-be-overlapped slices is important.
 
 //! Glidesort is a novel stable sorting algorithm that combines the best-case behavior of
 //! Timsort-style merge sorts for pre-sorted data with the best-case behavior of pattern-defeating
 //! quicksort for data with many duplicates. It is a comparison-based sort supporting arbitrary
 //! comparison operators, and while exceptional on data with patterns it is also very fast for
 //! random data.
-//! 
+//!
 //! For more information see the [readme](https://github.com/orlp/glidesort).
 
 // We avoid a dynamic allocation for our scratch buffer if a scratch buffer of
@@ -67,7 +66,10 @@ fn glidesort_alloc_size<T>(n: usize) -> usize {
     let full_allowed = n.min(FULL_ALLOC_MAX_BYTES / tlen);
     let half_allowed = (n / 2).min(HALF_ALLOC_MAX_BYTES / tlen);
     let eighth_allowed = n / 8;
-    full_allowed.max(half_allowed).max(eighth_allowed).max(SMALL_SORT)
+    full_allowed
+        .max(half_allowed)
+        .max(eighth_allowed)
+        .max(SMALL_SORT)
 }
 
 /// See [`slice::sort`].
@@ -89,16 +91,20 @@ where
 }
 
 /// Like [`sort`], except this function allocates its scratch space with `scratch_buf.reserve(_)`.
-/// 
+///
 /// This allows you to re-use the same allocation many times.
 pub fn sort_with_vec<T: Ord>(v: &mut [T], scratch_buf: &mut Vec<T>) {
     sort_with_vec_by(v, scratch_buf, |a, b| a.cmp(b))
 }
 
 /// Like [`sort_by_key`], except this function allocates its scratch space with `scratch_buf.reserve(_)`.
-/// 
+///
 /// This allows you to re-use the same allocation many times.
-pub fn sort_with_vec_by_key<T, F: FnMut(&T) -> K, K: Ord>(v: &mut [T], scratch_buf: &mut Vec<T>, mut f: F) {
+pub fn sort_with_vec_by_key<T, F: FnMut(&T) -> K, K: Ord>(
+    v: &mut [T],
+    scratch_buf: &mut Vec<T>,
+    mut f: F,
+) {
     sort_with_vec_by(v, scratch_buf, |a, b| f(a).cmp(&f(b)))
 }
 

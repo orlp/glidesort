@@ -121,7 +121,6 @@ pub fn split_at_spare_mut<T>(v: &mut Vec<T>) -> (&mut [T], &mut [MaybeUninit<T>]
     }
 }
 
-
 /// # Safety
 /// Only implemented for copy types.
 pub unsafe trait IsCopyType {
@@ -130,19 +129,24 @@ pub unsafe trait IsCopyType {
 
 #[cfg(not(feature = "unstable"))]
 unsafe impl<T> IsCopyType for T {
-    fn is_copy_type() -> bool { false }
+    fn is_copy_type() -> bool {
+        false
+    }
 }
 
 #[cfg(feature = "unstable")]
 unsafe impl<T> IsCopyType for T {
-    default fn is_copy_type() -> bool { false }
+    default fn is_copy_type() -> bool {
+        false
+    }
 }
 
 #[cfg(feature = "unstable")]
 unsafe impl<T: Copy> IsCopyType for T {
-    fn is_copy_type() -> bool { true }
+    fn is_copy_type() -> bool {
+        true
+    }
 }
-
 
 /// # Safety
 /// Only implemented for types for which we may call Ord on (soon to be
@@ -153,33 +157,40 @@ pub unsafe trait MayCallOrdOnCopy {
 
 #[cfg(not(feature = "unstable"))]
 unsafe impl<T> MayCallOrdOnCopy for T {
-    fn may_call_ord_on_copy() -> bool { false }
+    fn may_call_ord_on_copy() -> bool {
+        false
+    }
 }
 
 #[cfg(feature = "unstable")]
 unsafe impl<T> MayCallOrdOnCopy for T {
-    default fn may_call_ord_on_copy() -> bool { false }
+    default fn may_call_ord_on_copy() -> bool {
+        false
+    }
 }
 
 #[cfg(feature = "unstable")]
-#[marker] unsafe trait SafeToCall { }
+#[marker]
+unsafe trait SafeToCall {}
 
 #[cfg(feature = "unstable")]
 unsafe impl<T: SafeToCall> MayCallOrdOnCopy for T {
-    fn may_call_ord_on_copy() -> bool { true }
+    fn may_call_ord_on_copy() -> bool {
+        true
+    }
 }
 
 #[cfg(feature = "unstable")]
-unsafe impl<T: Copy> SafeToCall for T { }
+unsafe impl<T: Copy> SafeToCall for T {}
 
 #[cfg(feature = "unstable")]
-unsafe impl<T: SafeToCall> SafeToCall for (T, ) { }
+unsafe impl<T: SafeToCall> SafeToCall for (T,) {}
 
 #[cfg(feature = "unstable")]
-unsafe impl<T: SafeToCall, U: SafeToCall> SafeToCall for (T, U) { }
+unsafe impl<T: SafeToCall, U: SafeToCall> SafeToCall for (T, U) {}
 
 #[cfg(feature = "unstable")]
-unsafe impl<T: SafeToCall, U: SafeToCall, V: SafeToCall> SafeToCall for (T, U, V) { }
+unsafe impl<T: SafeToCall, U: SafeToCall, V: SafeToCall> SafeToCall for (T, U, V) {}
 
 macro_rules! impl_safetocallord {
     ($($t:ty, )*) => {

@@ -405,7 +405,7 @@ unsafe fn stable_bidir_quicksort_into<
             return;
         }
     }
-    
+
     // Load left/right into state first in case pivot selection panics as our guard.
     let mut state = BidirPartitionState::new(left, right, dest.clone(), scratch.clone());
     let mut pivot_pos = if let PartitionStrategy::LeftWithPivot(p) = partition_strategy {
@@ -506,11 +506,12 @@ unsafe fn stable_bidir_quicksort_into<
         // comparison operator is invalid.
         let pivot_in_geq =
             geq_in_scratch_guard.data_weak().contains(pivot_pos) || geq_in_dest.contains(pivot_pos);
-        let less_strategy = if let PartitionStrategy::LeftIfNewPivotEqualsCopy(p) = partition_strategy {
-            PartitionStrategy::LeftIfNewPivotEqualsCopy(p)
-        } else {
-            PartitionStrategy::RightWithNewPivot
-        };
+        let less_strategy =
+            if let PartitionStrategy::LeftIfNewPivotEqualsCopy(p) = partition_strategy {
+                PartitionStrategy::LeftIfNewPivotEqualsCopy(p)
+            } else {
+                PartitionStrategy::RightWithNewPivot
+            };
 
         let geq_strategy = if !partition_left && T::is_copy_type() {
             PartitionStrategy::LeftIfNewPivotEqualsCopy(ptr::read(pivot_pos))

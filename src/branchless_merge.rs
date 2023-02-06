@@ -243,7 +243,7 @@ impl<'l, 'r, 'dst, T, G: HasRightGap> BranchlessMergeState<'l, 'r, 'dst, T, G> {
             self.right_end = self.right_end.wrapping_sub(1).add(0); // Back in-bounds.
         }
     }
-    
+
     /// Exactly the same as branchless_merge_one_at_end, but does not cause
     /// out-of-bounds accesses if *one* of left, right is empty.
     #[inline]
