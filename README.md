@@ -63,6 +63,11 @@ auxiliary memory parameters to show the techniques in action on a smaller scale.
 
 # Technique overview
 
+If you prefer I also have a recorded talk
+I gave at FOSDEM 2023 that gives a high level overview of glidesort:
+
+[![Talk recording preview](https://i.imgur.com/Lcl0KbI.png)](https://fosdem.org/2023/schedule/event/rust_glidesort/)
+
 Glidesort uses a novel main loop based on powersort. Powersort is similar to
 Timsort, using heuristics to find a good order of stably merging sorted runs.
 Like powersort it does a linear scan over the input, recognizing any ascending
