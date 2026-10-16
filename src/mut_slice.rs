@@ -82,7 +82,7 @@ pub struct MutSlice<'l, B, T, S> {
     _metadata: PhantomData<(B, S)>,
 }
 
-unsafe impl<'l, B, T, S> Send for MutSlice<'l, B, T, S> {}
+unsafe impl<'l, B, T: Send, S> Send for MutSlice<'l, B, T, S> {}
 
 impl<'l, B, T, S> core::fmt::Debug for MutSlice<'l, B, T, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
